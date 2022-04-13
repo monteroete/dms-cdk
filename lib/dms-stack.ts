@@ -26,8 +26,24 @@ export class DMSStack extends cdk.Stack {
     const dmsReplication = new DMSReplication(this, 'Replication', dmsProps);
     const suffix = context.replicationInstanceIdentifier;
 
+    //const role = dmsReplication.createRoleForSecretsManager();
 
-    context.schemas.forEach(schema => {
+  context.schemas.forEach(schema => {
+      const source = dmsReplication.createOracleEndpoint(
+        'source-' + schema.name + '-' + suffix,
+        'source',
+        schema.sourceSecretsManagerSecretId,
+        schema.sourceSecretsManagerRoleArn
+      );
+
+      const target = dmsReplication.createPostgresEndpoint(
+        'target-' + schema.name + '-' + suffix,
+        'target',
+        schema.targetSecretsManagerSecretId,
+        schema.targetSecretsManagerRoleArn
+      );
+
+      /* Not using MySQL Endpoint now
       const source = dmsReplication.createMySQLEndpoint(
         'source-' + schema.name + '-' + suffix,
         'source',
@@ -41,6 +57,7 @@ export class DMSStack extends cdk.Stack {
         schema.targetSecretsManagerSecretId,
         schema.targetSecretsManagerRoleArn
       );
+      */
 
       dmsReplication.createReplicationTask(
         schema.name + '-replication-' + suffix,
@@ -66,10 +83,10 @@ function propsWithDefaults(context: ContextProps): ContextProps {
       LimitedSizeLobMode: false,
       LobMaxSize: 0,
       InlineLobMaxSize: 64,
-      LoadMaxFileSize: 500,
       ParallelLoadThreads: 0,
+      LoadMaxFileSize: 0,
       ParallelLoadBufferSize: 0,
-      BatchApplyEnabled: true,
+      BatchApplyEnabled: false,
       TaskRecoveryTableEnabled: true,
       ParallelLoadQueuesPerThread: 0,
       ParallelApplyThreads: 0,
@@ -84,17 +101,17 @@ function propsWithDefaults(context: ContextProps): ContextProps {
       TargetTablePrepMode: 'TRUNCATE_BEFORE_LOAD',
       CreatePkAfterFullLoad: false,
       StopTaskCachedChangesApplied: false,
-      StopTaskCachedChangesNotApplied: true,
+      StopTaskCachedChangesNotApplied: false,
       MaxFullLoadSubTasks: 16,
       TransactionConsistencyTimeout: 900,
-      CommitRate: 50000,
+      CommitRate: 50000
     },
     context.replicationTaskSettings.FullLoadSettings
   );
 
   context.replicationTaskSettings.Logging = Object.assign(
     {
-      EnableLogging: true,
+      EnableLogging: false,
       LogComponents: [
         {
           Id: 'TRANSFORMATION',
@@ -277,3 +294,4 @@ function propsWithDefaults(context: ContextProps): ContextProps {
 
   return context;
 }
+

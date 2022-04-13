@@ -120,8 +120,52 @@ export class DMSReplication extends cdk.Construct {
       endpointIdentifier: endpointIdentifier,
       endpointType: endpointType,
       engineName: 'mysql',
-      mySqlSettings: { secretsManagerAccessRoleArn: secretAccessRoleArn, secretsManagerSecretId: secretId },
+      mySqlSettings: { secretsManagerAccessRoleArn: roleArn, secretsManagerSecretId: secretId },
       extraConnectionAttributes: endpointType == 'source' ? 'parallelLoadThreads=1' : target_extra_conn_attr,
+    });
+
+    return endpoint;
+  }
+
+
+ /* createOracleEndpoint() and CreatePostgresEndpoint() added on 13.04 by Kenny
+ */
+
+ public createOracleEndpoint(
+    endpointIdentifier: string,
+    endpointType: 'source' | 'target',
+    secretId: string,
+    secretAccessRoleArn?: string
+  ): CfnEndpoint {
+    const target_extra_conn_attr = 'useLogMinerReader=N;useBfile=Y;failTasksOnLobTruncation=true;numberDataTypeScale=-2';
+    const roleArn = secretAccessRoleArn == null ? this.role.roleArn : secretAccessRoleArn
+    const endpoint = new CfnEndpoint(this, 'dms-' + endpointType + '-' + endpointIdentifier, {
+      endpointIdentifier: endpointIdentifier,
+      endpointType: endpointType,
+      engineName: 'oracle',
+      databaseName: 'awsdb',
+      oracleSettings: { secretsManagerAccessRoleArn: roleArn, secretsManagerSecretId: secretId },
+      extraConnectionAttributes: endpointType == 'source' ? 'addSupplementalLogging=true' : target_extra_conn_attr,
+    });
+
+    return endpoint;
+  }
+
+ public createPostgresEndpoint(
+    endpointIdentifier: string,
+    endpointType: 'source' | 'target',
+    secretId: string,
+    secretAccessRoleArn?: string
+  ): CfnEndpoint {
+    const target_extra_conn_attr = 'executeTimeout=180';
+    const roleArn = secretAccessRoleArn == null ? this.role.roleArn : secretAccessRoleArn
+    const endpoint = new CfnEndpoint(this, 'dms-' + endpointType + '-' + endpointIdentifier, {
+      endpointIdentifier: endpointIdentifier,
+      endpointType: endpointType,
+      engineName: 'aurora-postgresql',
+      databaseName: 'kenny',
+      postgreSqlSettings: { secretsManagerAccessRoleArn: roleArn, secretsManagerSecretId: secretId },
+      extraConnectionAttributes: endpointType == 'source' ? 'heartbeatFrequency=5' : target_extra_conn_attr,
     });
 
     return endpoint;
