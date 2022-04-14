@@ -231,7 +231,29 @@ In the cdk.json file you define the DMS related settings.
 | engineName                          | The name of database engine. Only mysql and maridb is allowed                  | mysql         |  n       |
 | publiclyAccessible                  | If the DMS instance is publicly accessible.                                    | false         |  y       |
 
+## Amazon Secrets Manager
+Contents of a secret ID in Secrets Manager is different depending on the RDS database engine type. 
 
+### Aurora-PostgreSQL 
+| Secret Key           | Secret Value                                                          |
+| -------------------- | :---------------------------------------------------------------------|   
+| host                 | sample-db-database.cluster-kxxx999nnn2.eu-central-1.rds.amazonaws.com |
+| port                 | 5432                                                                  | 
+| dbClusterIdentifier  | sample-db-database                                                    |
+| password             | password                                                              |
+| username             | postgres                                                              |
+| engine               | postgres                                                              |
+
+### Oracle 
+| Secret Key           | Secret Value                                                          |
+| -------------------- | :---------------------------------------------------------------------| 
+| host                 | sampleora.kxxx999nnn2.eu-central-1.rds.amazonaws.com                  |
+| port                 | 1521                                                                  |
+| password             | password                                                              |
+| username             | oracle_sct_user                                                       |
+| dbInstanceIdentifier | sample-db-database                                                    |
+| engine               | oracle                                                                |
+   
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
