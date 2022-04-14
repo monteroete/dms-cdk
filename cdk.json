@@ -30,6 +30,7 @@
       "replicationInstanceClass": "dms.r5.4xlarge",
       "replicationInstanceIdentifier": "dms-dev-eu",
       "replicationSubnetGroupIdentifier": "dms-dev-subnet-eu",
+      "publiclyAccessible": "true",
       "replicationTaskSettings": {
       },
       "migrationType": "full-load"

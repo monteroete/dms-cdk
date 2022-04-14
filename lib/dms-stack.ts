@@ -19,7 +19,6 @@ export class DMSStack extends cdk.Stack {
       replicationInstanceClass: context.replicationInstanceClass,
       replicationInstanceIdentifier: context.replicationInstanceIdentifier,
       vpcSecurityGroupIds: context.vpcSecurityGroupIds,
-      engineName: 'mysql',
       region: Stack.of(this).region,
     };
 

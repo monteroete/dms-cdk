@@ -14,7 +14,7 @@ export type DMSProps = {
   vpcSecurityGroupIds: string[];
   allocatedStorage?: number;
   engineName?: string;
-  publiclyAccessible?: false;
+  publiclyAccessible?: boolean;
   region: string;
 };
 
@@ -227,7 +227,7 @@ function getPropsWithDefaults(props: DMSProps): DMSProps {
       targetDBPort: 3306,
       allocatedStorage: 50,
       engineName: 'mysql' || 'mariadb',
-      publiclyAccessible: false,
+      publiclyAccessible: true,
     },
     props
   );
